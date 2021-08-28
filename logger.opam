@@ -1,0 +1,27 @@
+opam-version: "2.0"
+maintainer: "hellojukay@163.com"
+authors: "hellojukay"
+license: "MIT"
+homepage: "https://github.com/hellojukay/logger"
+bug-reports: "https://github.com/hellojukay/logger/issues"
+doc: "https://github.com/hellojukay/logger"
+depends: [
+  "ocaml" {>= "4.03.0"}
+  "base-unix"
+  "base-threads"
+  "ocamlfind" {>= "1.7.2"}
+  "lambda-term" {>= "3.1.0" & < "4.0"}
+  "react" {>= "1.0.0"}
+  "cppo" {build & >= "1.1.2"}
+  "dune" {>= "1.0"}
+]
+build: [
+  ["dune" "subst"] {dev}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
+dev-repo: "git+https://github.com/hellojukay/logger.git"
+synopsis: "A log library for OCaml."
+description: """
+logger is a log library for OCaml.
+"""
