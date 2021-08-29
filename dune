@@ -1,3 +1,4 @@
 (library
  (name  logger)
+ (public_name logger)
  (libraries unix  threads.posix ))
