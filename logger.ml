@@ -1,4 +1,4 @@
-type level = DEBUG | INFO | ERROR | WARN
+type level = ERROR | INFO | DEBUG | WARN
 
 let color l msg =
   let red = "\033[0;31;1m" in
@@ -75,7 +75,7 @@ class logger =
 
     method info msg =
       match lvl with
-      | INFO ->
+      | INFO | DEBUG | WARN ->
           let full_msg = self#with_prefix_and_time msg in
           if with_color then full_msg |> color INFO |> self#write
           else full_msg |> self#write
