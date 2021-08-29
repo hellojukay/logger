@@ -1,4 +1,4 @@
-type level = ERROR | INFO | DEBUG | WARN
+type level = DEBUG | INFO | ERROR | WARN
 
 let color l msg =
   let red = "\033[0;31;1m" in
