@@ -6,11 +6,18 @@ let color l msg =
   let white = "\033[0;37m" in
   let cyan = "\033[0;36m" in
   let color_end = "\033[0m" in
-  match l with
-  | DEBUG -> Printf.sprintf "%s%s%s" cyan msg color_end
-  | INFO -> Printf.sprintf "%s%s%s" white msg color_end
-  | ERROR -> Printf.sprintf "%s%s%s" red msg color_end
-  | WARN -> Printf.sprintf "%s%s%s" yellow msg color_end
+  let buf = Buffer.create 1024 in
+  let color_bytes =
+    match l with
+    | DEBUG -> Bytes.of_string cyan
+    | INFO -> Bytes.of_string white
+    | ERROR -> Bytes.of_string red
+    | WARN -> Bytes.of_string yellow
+  in
+  Buffer.add_bytes buf color_bytes;
+  Buffer.add_bytes buf msg;
+  Buffer.add_bytes buf (Bytes.of_string color_end);
+  Buffer.to_bytes buf
 
 class logger =
   object (self)
@@ -39,9 +46,8 @@ class logger =
       with_color <- b;
       Mutex.unlock lk
 
-    method write msg =
+    method write buf =
       Mutex.lock lk;
-      let buf = Bytes.of_string (msg ^ "\n") in
       Unix.write (Unix.descr_of_out_channel output) buf 0 (Bytes.length buf)
       |> ignore;
       Mutex.unlock lk
@@ -53,7 +59,7 @@ class logger =
         local.tm_mon local.tm_mday local.tm_hour local.tm_min local.tm_sec
 
     method with_prefix_and_time str =
-      Printf.sprintf "%s %s %s" (self#now ()) prefix str
+      Printf.sprintf "%s %s %s" (self#now ()) prefix str |> Bytes.of_string
 
     method set_level (l : level) =
       Mutex.lock lk;

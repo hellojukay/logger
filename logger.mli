@@ -1,6 +1,6 @@
 type level = DEBUG | INFO | ERROR | WARN
 
-val color : level -> string -> string
+val color : level -> Bytes.t -> Bytes.t
 
 class logger :
   object
@@ -20,11 +20,11 @@ class logger :
 
     method set_color : bool -> unit
 
-    method write : string -> unit
+    method write : Bytes.t -> unit
 
     method now : unit -> string
 
-    method with_prefix_and_time : string -> string
+    method with_prefix_and_time : string -> Bytes.t
 
     method set_level : level -> unit
 
