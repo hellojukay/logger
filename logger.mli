@@ -1,5 +1,7 @@
 type level = DEBUG | INFO | ERROR | WARN
 
+val color : level -> string -> string
+
 class logger :
   object
     val mutable lvl : level
@@ -12,23 +14,23 @@ class logger :
 
     val lk : Mutex.t
 
-    val set_output : Stdlib.out_channel -> unit
+    method set_output : Stdlib.out_channel -> unit
 
-    val set_prefix : string -> unit
+    method set_prefix : string -> unit
 
-    val write : string -> unit
+    method write : string -> unit
 
-    val now : unit -> string
+    method now : unit -> string
 
-    val with_prefix_and_time : string -> string
+    method with_prefix_and_time : string -> string
 
-    val set_level : level -> unit
+    method set_level : level -> unit
 
-    val debug : string -> unit
+    method debug : string -> unit
 
-    val error : string -> unit
+    method error : string -> unit
 
-    val info : string -> unit
+    method info : string -> unit
 
-    val warn : string -> unit
+    method warn : string -> unit
   end
