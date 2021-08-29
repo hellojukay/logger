@@ -41,7 +41,7 @@ class logger =
 
     method write msg =
       Mutex.lock lk;
-      let buf = Bytes.of_string msg in
+      let buf = Bytes.of_string (msg ^ "\n") in
       Unix.write (Unix.descr_of_out_channel output) buf 0 (Bytes.length buf)
       |> ignore;
       Mutex.unlock lk
@@ -53,7 +53,7 @@ class logger =
         local.tm_mon local.tm_mday local.tm_hour local.tm_min local.tm_sec
 
     method with_prefix_and_time str =
-      Printf.sprintf "%s %s %s\n" (self#now ()) prefix str
+      Printf.sprintf "%s %s %s" (self#now ()) prefix str
 
     method set_level (l : level) =
       Mutex.lock lk;
