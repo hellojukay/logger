@@ -34,6 +34,11 @@ class logger =
       prefix <- str;
       Mutex.unlock lk
 
+    method set_color b =
+      Mutex.lock lk;
+      with_color <- b;
+      Mutex.unlock lk
+
     method write msg =
       Mutex.lock lk;
       let buf = Bytes.of_string msg in

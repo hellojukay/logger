@@ -18,6 +18,8 @@ class logger :
 
     method set_prefix : string -> unit
 
+    method set_color : bool -> unit
+
     method write : string -> unit
 
     method now : unit -> string
