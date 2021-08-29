@@ -1,5 +1,17 @@
 type level = DEBUG | INFO | ERROR | WARN
 
+let color l msg =
+  let red = "\033[0;31;1m" in
+  let yellow = "\033[0;33m" in
+  let white = "\033[0;37m" in
+  let cyan = "\033[0;36m" in
+  let color_end = "\033[0m" in
+  match l with
+  | DEBUG -> Printf.sprintf "%s%s%s" cyan msg color_end
+  | INFO -> Printf.sprintf "%s%s%s" white msg color_end
+  | ERROR -> Printf.sprintf "%s%s%s" red msg color_end
+  | WARN -> Printf.sprintf "%s%s%s" yellow msg color_end
+
 class logger =
   object (self)
     val mutable lvl : level = DEBUG
@@ -7,6 +19,8 @@ class logger =
     val mutable output : Stdlib.out_channel = stdout
 
     val mutable prefix = ""
+
+    val mutable with_color = true
 
     val lk = Mutex.create ()
 
@@ -34,7 +48,7 @@ class logger =
         local.tm_mon local.tm_mday local.tm_hour local.tm_min local.tm_sec
 
     method with_prefix_and_time str =
-      Printf.sprintf "%s %s %s\n" (self#now ()) prefix str |> self#write
+      Printf.sprintf "%s %s %s\n" (self#now ()) prefix str
 
     method set_level (l : level) =
       Mutex.lock lk;
@@ -42,13 +56,30 @@ class logger =
       Mutex.unlock lk
 
     method debug msg =
-      match lvl with DEBUG | WARN -> self#with_prefix_and_time msg | _ -> ()
+      match lvl with
+      | DEBUG | WARN ->
+          let full_msg = self#with_prefix_and_time msg in
+          if with_color then full_msg |> color DEBUG |> self#write
+          else full_msg |> self#write
+      | _ -> ()
 
-    method error msg = self#with_prefix_and_time msg
+    method error msg =
+      let full_msg = self#with_prefix_and_time msg in
+      if with_color then full_msg |> color ERROR |> self#write
+      else full_msg |> self#write
 
     method info msg =
-      match lvl with INFO -> self#with_prefix_and_time msg | _ -> ()
+      match lvl with
+      | INFO ->
+          let full_msg = self#with_prefix_and_time msg in
+          if with_color then full_msg |> color INFO |> self#write
+          else full_msg |> self#write
+      | _ -> ()
 
     method warn msg =
-      match lvl with WARN -> self#with_prefix_and_time msg | _ -> ()
+      match lvl with
+      | WARN ->
+          let full_msg = self#with_prefix_and_time msg in
+          if with_color then full_msg |> color WARN |> self#write
+      | _ -> ()
   end
