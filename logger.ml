@@ -20,7 +20,7 @@ class logger =
 
     val mutable prefix = ""
 
-    val mutable with_color = true
+    val mutable with_color = false
 
     val lk = Mutex.create ()
 
