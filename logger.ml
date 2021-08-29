@@ -52,10 +52,3 @@ class logger =
     method warn msg =
       match lvl with WARN -> self#with_prefix_and_time msg | _ -> ()
   end
-
-let () =
-  let f = open_out "main.log" in
-  let log = new logger in
-  log#set_output f;
-  log#set_level WARN;
-  log#debug "hello world"
